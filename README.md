@@ -44,11 +44,25 @@
 Google Cloud 프로젝트를 만들 필요 없습니다.
 
 1. <https://developers.google.com/oauthplayground> 접속
-2. 왼쪽 목록에서 **Google Tasks API v1** 을 펼칩니다
+2. 왼쪽 목록에서 **Google Tasks API v1** 을 찾아 펼칩니다
+   → 목록에 API 가 수백 개라 눈으로 찾기 어렵습니다. **`Cmd+F`(맥) / `Ctrl+F`(윈도우)로 "Google Tasks API v1" 을 검색**하세요.
+   → **`Cloud Tasks API v2` 와 다릅니다.** 이름이 비슷하니 주의.
 3. `https://www.googleapis.com/auth/tasks` 를 체크
 4. **Authorize APIs** → 구글 로그인 → 허용
 5. **Exchange authorization code for tokens** 클릭
 6. 화면에 뜨는 **Access token** 을 복사
+
+> 🔑 **복사하기 전에 `scope` 를 꼭 확인하세요.** 5번 결과에 이런 응답이 나오는데, `scope` 에 **`.../auth/tasks`** 가 들어 있어야 합니다.
+>
+> ```json
+> {
+>   "access_token": "ya29.a0Ad...",
+>   "scope": "https://www.googleapis.com/auth/tasks ...",   ← 여기
+>   "expires_in": 3599
+> }
+> ```
+>
+> 다른 이름이 나왔다면 목록에서 엉뚱한 API 를 고른 것입니다. 그대로 진행하면 나중에 호출할 때 `403 Insufficient Permission` 이 납니다. **2번부터 다시 하세요.**
 
 > ⚠️ **유효기간 1시간.** 만료되면 4~6번을 다시 합니다.
 > ⚠️ **토큰을 소스코드에 직접 쓰지 마세요.** `.env` 같은 파일에 두고, 그 파일이 커밋되지 않게 하세요. 공개 저장소에 올라가면 남이 내 계정을 조작할 수 있습니다.
@@ -66,6 +80,7 @@ Google Cloud 프로젝트를 만들 필요 없습니다.
 
 ### 지켜야 할 제약
 
+- **도구 이름은 위 표에 적힌 그대로** 씁니다. 제작 스킬(`skills/mcp-builder`)은 `google_tasks_add_task` 처럼 서비스 접두어를 붙이라고 권하지만, 이번 실습에서는 표의 이름을 씁니다. 에이전트가 접두어를 붙이려 하면 표대로 고쳐달라고 하세요.
 - **도구 이름은 25자 이내.** 클라이언트가 `mcp__서버이름__` 접두어를 붙여서 64자 제한에 걸립니다.
 - **Tools 만 씁니다.** Resources 와 Prompts 는 제품마다 지원이 갈리므로 이번엔 쓰지 않습니다.
 - **전송 방식은 `stdio`** (내 컴퓨터에서 직접 실행). 원격 배포는 하지 않습니다. 내 계정 토큰이 들어간 서버를 남이 접근할 수 있는 곳에 올리면 안 되기 때문입니다.
